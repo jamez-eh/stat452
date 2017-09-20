@@ -1,20 +1,37 @@
 ---
 title: "Homework 1"
-author: "Charandeep Grewal"
+author: "Charandeep Grewal 301190855, James Hopkins 301139318, Alisha McGrath 301242597"
 date: "September 12, 2017"
-output:
-  pdf_document: default
-  html_document: default
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+## Question 1 (Chapter 2, #1, 8 marks)
+
+(a) <your answer here>
+
+(b) <etc.>
+
+(c)
+
+(d)
+
+
+## Question 2 (Chapter 2, #2, 6 marks)
+
+(a) 
+   Regression, Inference, n = 500, p = 4
+(b)
+   Classification, Prediction, n = 20, p = 13
+(c)
+   Regression, Prediction, n = 52, p =3
 
 ```{r}
-setwd("C:/Users/cgrew/Desktop")
 library(ISLR)
 data(Auto)
+head(Auto)
 ```
 
 9b)
