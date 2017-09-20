@@ -47,13 +47,18 @@ head(Auto)
 ```{r}
 sapply(Auto[, (1:7)], range)
 ```
-
+mpg [9.0, 46.6], displacement[68, 455], horsepower[46,230], weight[1613,5140], acceleration[8.0,24.8]
 9c) 
 ```{r}
 sapply(Auto[, (1:7)], mean)
+
 sapply(Auto[, (1:7)], sd)
 ```
-
+mpg: mean = 23.445918, SD = 7.805007
+displacement: mean = 194.411990, SD = 104.644004
+horsepower: mean = 104.469388, SD = 38.491160
+weight: mean = 2977.584184 SD = 849.402560  
+acceleration: mean = 15.541327 SD = 2.758864
 9d)
 ```{r}
 Auto1 <- Auto[-10:-85, (1:7)]
@@ -61,7 +66,11 @@ sapply(Auto1[, (1:7)], range)
 sapply(Auto[, (1:7)], mean)
 sapply(Auto[, (1:7)], sd)
 ```
-
+mpg: mean = 23.445918, SD = 7.805007
+displacement: mean = 194.411990, SD = 104.644004
+horsepower: mean = 104.469388, SD = 38.491160
+weight: mean = 2977.584184 SD = 849.402560  
+acceleration: mean = 15.541327 SD = 2.758864
 9e)
 ```{r}
 library(ggplot2)
