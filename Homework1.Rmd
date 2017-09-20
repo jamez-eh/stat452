@@ -10,13 +10,15 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 ## Question 1 (Chapter 2, #1, 8 marks)
 
-(a) <your answer here>
+(a) With a large sample size and a small number of predictors we should use a flexible method. There is a smaller chance of overfitting when the dataset is large.
 
-(b) <etc.>
+(b) With small data sets and a large number of predictors, the chance for overfitting the training data will be high. Therefore Training MSE will be small, but the test MSE may be large
 
-(c)
+(c) 
+ Flexible models may be necessary to detect non-linear trends
 
 (d)
+
 
 
 ## Question 2 (Chapter 2, #2, 6 marks)
