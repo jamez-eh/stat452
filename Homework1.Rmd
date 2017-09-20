@@ -33,7 +33,10 @@ library(ISLR)
 data(Auto)
 head(Auto)
 ```
+9a)
 
+    Qualitative: cylinders, year, origin, name
+    Quantitative: mpg, displacement, horsepower, weight, acceleration
 9b)
 ```{r}
 sapply(Auto[, (1:7)], range)
