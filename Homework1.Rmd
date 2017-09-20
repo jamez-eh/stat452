@@ -10,25 +10,29 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 ## Question 1 (Chapter 2, #1, 8 marks)
 
-(a) With a large sample size and a small number of predictors we should use a flexible method. There is a smaller chance of overfitting when the dataset is large.
+(a) Flexible:
+With a large sample size and a small number of predictors we should use a flexible method. There is a smaller chance of overfitting when the dataset is large. The bias will be low.
 
-(b) With small data sets and a large number of predictors, the chance for overfitting the training data will be high. Therefore Training MSE will be small, but the test MSE may be large
+(b) Inflexible:
+With small data sets and a large number of predictors, the chance for overfitting the training data will be high. Therefore Training MSE will be small, but the test MSE may be large. These also tend to lead to high variance and low reduction in bias.
 
-(c) 
- Flexible models may be necessary to detect non-linear trends
+(c) Flexible: 
+ Flexible models may be required to detect non-linear trends
 
-(d)
+(d) Inflexible:
+
+   With flexible models, the bias would be to large and they would follow the noise.
 
 
 
 ## Question 2 (Chapter 2, #2, 6 marks)
 
 (a) 
-   Regression, Inference, n = 500, p = 4
+   Regression: response is qualitative, Inference: we are interested in the response, n = 500 (companies), p = 3 (profit, number of employees, industry)
 (b)
-   Classification, Prediction, n = 20, p = 13
+   Classification: Response is qualitative, Prediction: we are interested in success or failure,  n = 20 similar products, p = 13 the three listed, plus the 10 other variables
 (c)
-   Regression, Prediction, n = 52, p =3
+   Regression: response is qualitative, Prediction: interested in pass or fail, n = 52 (weeks in 2012), p =3 (change in US, British, and German Markets)
 
 ```{r}
 library(ISLR)
