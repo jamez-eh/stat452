@@ -1,0 +1,48 @@
+---
+title: "Homework 1"
+author: "Charandeep Grewal"
+date: "September 12, 2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+setwd("C:/Users/cgrew/Desktop")
+library(ISLR)
+data(Auto)
+```
+
+9b)
+```{r}
+sapply(Auto[, (1:7)], range)
+```
+
+9c) 
+```{r}
+sapply(Auto[, (1:7)], mean)
+sapply(Auto[, (1:7)], sd)
+```
+
+9d)
+```{r}
+Auto1 <- Auto[-10:-85, (1:7)]
+sapply(Auto1[, (1:7)], range)
+sapply(Auto[, (1:7)], mean)
+sapply(Auto[, (1:7)], sd)
+```
+
+9e)
+```{r}
+library(ggplot2)
+plot(Auto$cylinders, Auto$mpg,xlab="Cylinders",ylab="Mpg")
+plot(Auto$weight, Auto$mpg,xlab="Weight",ylab="Mpg")
+plot(Auto$horsepower, Auto$mpg,xlab="Horsepower",ylab="Mpg")
+plot(Auto$year, Auto$mpg,xlab="Year",ylab="Mpg")
+plot(Auto$acceleration, Auto$mpg,xlab="Acceleration",ylab="Mpg")
+plot(Auto$displacement, Auto$mpg,xlab="Displacement",ylab="Mpg")
+```
