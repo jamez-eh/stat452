@@ -1,6 +1,6 @@
 ---
 title: "Homework 1"
-author: "Charandeep Grewal 301190855, James Hopkins 301139318, Alisha McGrath 301242597"
+author: "Charandeeep Grewal 301190855, James Hopkins 301139318, Alisha McGrath 301242597"
 date: "September 12, 2017"
 output: html_document
 ---
