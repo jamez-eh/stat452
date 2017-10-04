@@ -1,0 +1,172 @@
+---
+title: "Homework 2"
+author: "Name1, Name2 and Name3"
+date: '2017-10-04'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Question 1 (Chapter 3, #3, 6 marks)
+
+Suppose we have a data set with five predictors, X1 = GPA, X2 = IQ, X3 = Gender (1 for Female and 0 for Male), X4 = Interaction between GPA and IQ, and X5 = Interaction between GPA and Gender. The response is starting salary after graduation (in thousands of dollars). Suppose we use least squares to fit the model, and get βˆ0 = 50, βˆ1 = 2 0 , βˆ 2 = 0 . 0 7 , βˆ 3 = 3 5 , βˆ 4 = 0 . 0 1 , βˆ 5 = − 1 0 .
+(a) Which answer is correct, and why?
+i. For a fixed value of IQ and GPA,males earn moreon average than females.
+ii. For a fixed value of IQ and GPA, females earn more on average than males.
+iii. For a fixed value of IQ and GPA,males earn more on average than females provided that the GPA is high enough.
+iv. For a fixed value of IQ and GPA, females earn more on average than males provided that the GPA is high enough.
+
+X3 is gender and X5 is the interation between gender and GPA
+because βˆ 3 = 35 and βˆ 5 = − 10 a higher GPA will cause being a male to be disadvantageous. Being male means that men make 35 thousand dollars more just for being a man, but make 10 thousand per 1.0 in GPA increase. This suggests that if the GPA is 3.5 then the effect of gender is neutral and any higher it is advantageous to be a girl. 
+
+(b) Predict the salary of a female with IQ of 110 and a GPA of 4.0.
+```{r}
+50 + 20*4 + 0.07*110 + 35*0 + 0.01*(110)*(4) - 10*(0)*(4)
+```
+142100 dollars
+
+(c) True or false: Since the coefficient for the GPA/IQ interaction term is very small, there is very little evidence of an interaction effect. Justify your answer.
+
+False, the effect may be small, but that does not mean that the p value for this interaction is small. We may choose to leave this effect out for parsimony's sake however.
+
+
+## Question 2 (Chapter 3, #9, 10 marks)
+
+```{r}
+library(ISLR) 
+data(Auto)
+library(dplyr)
+Auto2 <- Auto %>% select(-name) %>% mutate(origin = factor(origin))
+head(Auto)
+head(Auto2)
+```
+
+This question involves the use of multiple linear regression on the Auto data set.
+
+(a) Produce a scatterplot matrix which includes all of the variables in the data set.
+```{r}
+pairs(Auto)
+```
+
+(b) Compute the matrix of correlations between the variables using the function cor(). You will need to exclude the name variable, which is qualitative.
+```{r}
+
+AutoCor <- Auto2[, c(1:7)]
+Auto2[8] <- lapply(Auto2[8], as.numeric)
+corcoefs <- cor(Auto2)
+corcoefs
+
+
+```
+(c) Use the lm() function to perform a multiple linear regression with mpg as the response and all other variables except name as the predictors. Use the summary() function to print the results. Comment on the output. For instance:
+
+```{r}
+autolm <-lm(mpg ~ ., data = Auto2)
+summary(autolm)
+```
+
+i. Is there a relationship between the predictors and the re- sponse?
+
+Yes, the F statistic is very large.
+
+The p values for cylinders, acceleration, and horsepower are very large and suggest that there is no relationship between them and mpg.
+
+
+ii. Which predictors appear to have a statistically significant relationship to the response?
+
+All of the other predictors are statistically significant
+
+iii. What does the coefficient for the year variable suggest?
+
+The year coefficient is very statistically significant (very small p value). It suggests that for every year newer a car is, its mpg increases by 0.751 
+
+(d) Use the plot() function to produce diagnostic plots of the linear regression fit. Comment on any problems you see with the fit. Do the residual plots suggest any unusually large outliers? Does the leverage plot identify any observations with unusually high leverage?
+
+```{r}
+plot(autolm)
+
+```
+The residual vs fitted plot looks mostly linear, but there may be a slight dip in the middle.
+There appears to be non-constant error variance due to the funnel shape of the Residuals vs Fitted plot
+Observation 14 has a very high amount of leverage.
+321, 325, and 324 may be outliers
+
+(e) Use the * and : symbols to fit linear regression models with interaction effects. Do any interactions appear to be statistically significant?
+```{r}
+autolm2 <-lm(mpg ~ (.)^2, data = Auto2)
+summary(autolm2)
+
+
+Auto2$acceleration <- NULL
+Auto2$horsepower <- NULL
+autolm3 <-lm(mpg ~ (.)^2, data = Auto2) 
+
+summary(autolm3)
+```
+The following: 
+acceleration:year          
+acceleration:origin 
+displacement:year
+all appear to have significant interaction effects at the 5% level when every predictor is included
+
+(f) Try a few different transformations of the variables, such as log(X), √X, X2. Comment on your findings. To keep the investigation of transformations
+manageable, try transformations of the `weight` variable
+only.
+
+```{r}
+
+plot(lm(mpg~ weight, data = Auto))
+plot(lm (mpg~ log(weight), data = Auto))
+plot(lm(mpg~ sqrt(weight), data = Auto))
+plot(lm(mpg~ weight + I(weight^2), data = Auto))
+
+
+
+```
+Both log(weight) and the addition of weight^2 seem to fit the data slightly better, however all transformations suffer from similar problems. We can use Anova to investigate the addition of weight^2 to the overall model.
+
+
+```{r}
+lmb <- lm(mpg~. - name, data = Auto)
+lmsqr <- lm(mpg~. + I(weight^2) - name, data = Auto)
+anova(lmb, lmsqr)
+```
+For the model with all the predictors, but no interactions: The anova table for adding a squared weight predictor has a small p value and suggests that adding the weight^2 fits the data better.
+
+
+## Question 3 (Chapter 4, #4, 7 marks)
+
+(a)
+
+(b)
+
+(c)
+
+(d)
+
+(e)
+
+
+## Question 4 (Chapter 4, #10 parts (a)-(h), 9 marks)
+
+(a)
+
+(b)
+
+(c)
+
+(d)
+
+(e)
+
+(f)
+
+(g)
+
+(h)
+
+(i) DO NOT HAND IN THIS PART (though you are, of course,
+free to do it on your own).
