@@ -34,15 +34,12 @@ Auto2 <- Auto %>% select(-name) %>% mutate(origin = factor(origin))
 head(Auto)
 head(Auto2)
 ```
-
-This question involves the use of multiple linear regression on the Auto data set.
-
-(a) Produce a scatterplot matrix which includes all of the variables in the data set.
+(a) P
 ```{r}
 pairs(Auto)
 ```
 
-(b) Compute the matrix of correlations between the variables using the function cor(). You will need to exclude the name variable, which is qualitative.
+(b) 
 ```{r}
 
 AutoCor <- Auto2[, c(1:7)]
@@ -52,40 +49,25 @@ corcoefs
 
 
 ```
-(c) Use the lm() function to perform a multiple linear regression with mpg as the response and all other variables except name as the predictors. Use the summary() function to print the results. Comment on the output. For instance:
-
+(c) 
 ```{r}
 autolm <-lm(mpg ~ ., data = Auto2)
 summary(autolm)
 ```
 
-i. Is there a relationship between the predictors and the re- sponse?
+i. Yes there is a relationship between the predictors and the response, the F statistic is very large. The p values for cylinders, acceleration, and horsepower are very large and suggest that there is no relationship between them and mpg.
 
-Yes, the F statistic is very large.
+ii. Weight, year, origin, and displacement are statistically significant. 
 
-The p values for cylinders, acceleration, and horsepower are very large and suggest that there is no relationship between them and mpg.
+iii. The year coefficient is very statistically significant (very small p value). It suggests that for every year newer a car is, its mpg increases by 0.751. 
 
-
-ii. Which predictors appear to have a statistically significant relationship to the response?
-
-All of the other predictors are statistically significant
-
-iii. What does the coefficient for the year variable suggest?
-
-The year coefficient is very statistically significant (very small p value). It suggests that for every year newer a car is, its mpg increases by 0.751 
-
-(d) Use the plot() function to produce diagnostic plots of the linear regression fit. Comment on any problems you see with the fit. Do the residual plots suggest any unusually large outliers? Does the leverage plot identify any observations with unusually high leverage?
-
+(d) 
 ```{r}
 plot(autolm)
-
 ```
-The residual vs fitted plot looks mostly linear, but there may be a slight dip in the middle.
-There appears to be non-constant error variance due to the funnel shape of the Residuals vs Fitted plot
-Observation 14 has a very high amount of leverage.
-321, 325, and 324 may be outliers
+The residual vs fitted plot looks mostly linear, but there may be a slight dip in the middle. There appears to be non-constant error variance due to the funnel shape of the Residuals vs Fitted plot. Observation 14 has a very high amount of leverage. 321, 325, and 324 may be outliers.
 
-(e) Use the * and : symbols to fit linear regression models with interaction effects. Do any interactions appear to be statistically significant?
+(e) 
 ```{r}
 autolm2 <-lm(mpg ~ (.)^2, data = Auto2)
 summary(autolm2)
@@ -97,35 +79,31 @@ autolm3 <-lm(mpg ~ (.)^2, data = Auto2)
 
 summary(autolm3)
 ```
-The following: 
-acceleration:year          
-acceleration:origin 
-displacement:year
-all appear to have significant interaction effects at the 5% level when every predictor is included
+The interactions: acceleration:year, acceleration:origin, displacement:year all appear to have significant interaction effects at the 5% level when every predictor is included. 
 
-(f) Try a few different transformations of the variables, such as log(X), √X, X2. Comment on your findings. To keep the investigation of transformations
-manageable, try transformations of the `weight` variable
-only.
-
+(f)
 ```{r}
 
-plot(lm(mpg~ weight, data = Auto))
-plot(lm (mpg~ log(weight), data = Auto))
-plot(lm(mpg~ sqrt(weight), data = Auto))
-plot(lm(mpg~ weight + I(weight^2), data = Auto))
-
-
-
+plot(lm(mpg~ weight+displacement+year+origin, data = Auto))
+plot(lm (mpg~ log(weight)+displacement+year+origin, data = Auto))
+plot(lm(mpg~ sqrt(weight)+displacement+year+origin, data = Auto))
+plot(lm(mpg~ weight + I(weight^2)+displacement+year+origin, data = Auto))
 ```
-Both log(weight) and the addition of weight^2 seem to fit the data slightly better, however all transformations suffer from similar problems. We can use Anova to investigate the addition of weight^2 to the overall model.
+Both log(weight) and the addition of weight^2 seem to fit the data slightly better, however all transformations suffer from similar problems. 
 
 
 ```{r}
-lmb <- lm(mpg~. - name, data = Auto)
-lmsqr <- lm(mpg~. + I(weight^2) - name, data = Auto)
-anova(lmb, lmsqr)
+fit.weight1 = lm(mpg~displacement+weight+year+origin, data=Auto)
+fit.weight2 = lm(mpg~displacement+I(weight^2)+year+origin, data=Auto)
+fit.weight3 = lm(mpg~displacement+log(weight)+year+origin, data=Auto)
+fit.displacement = lm(mpg~I(displacement^2)+weight+year+origin, data=Auto)
+summary(fit.weight1)
+summary(fit.weight2)
+summary(fit.weight3)
+summary(fit.displacement)
 ```
-For the model with all the predictors, but no interactions: The anova table for adding a squared weight predictor has a small p value and suggests that adding the weight^2 fits the data better.
+
+Looking at the summaries, weight^2 and log(weight) both improve the p-values of all the predictors, but weight^2 does a better job reducing the p-values. When looking at those two summaries, the displacement predictor is still doesn't reach the threshold p-value for significance. Trasnforming displacement by squaring it, causes all predictors to have a p-value below 0.05, allowing them to be significant. Squaring the displacement seems to be the best model out of the ones we tested. 
 
 
 ## Question 3 (Chapter 4, #4, 7 marks)
