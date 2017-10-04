@@ -12,25 +12,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Question 1 (Chapter 3, #3, 6 marks)
 
-Suppose we have a data set with five predictors, X1 = GPA, X2 = IQ, X3 = Gender (1 for Female and 0 for Male), X4 = Interaction between GPA and IQ, and X5 = Interaction between GPA and Gender. The response is starting salary after graduation (in thousands of dollars). Suppose we use least squares to fit the model, and get βˆ0 = 50, βˆ1 = 2 0 , βˆ 2 = 0 . 0 7 , βˆ 3 = 3 5 , βˆ 4 = 0 . 0 1 , βˆ 5 = − 1 0 .
-(a) Which answer is correct, and why?
-i. For a fixed value of IQ and GPA,males earn more on average than females.
-ii. For a fixed value of IQ and GPA, females earn more on average than males.
-iii. For a fixed value of IQ and GPA,males earn more on average than females provided that the GPA is high enough.
-iv. For a fixed value of IQ and GPA, females earn more on average than males provided that the GPA is high enough.
 
-X3 is gender and X5 is the interation between gender and GPA
-because βˆ 3 = 35 and βˆ 5 = − 10 a higher GPA will cause being a male to be disadvantageous. Being male means that men make 35 thousand dollars more just for being a man, but make 10 thousand per 1.0 in GPA increase. This suggests that if the GPA is 3.5 then the effect of gender is neutral and any higher it is advantageous to be a girl. 
+(a) X3 is gender and X5 is the interation between gender and GPA because βˆ 3 = 35 and βˆ 5 = − 10 a higher GPA will cause being a female to be disadvantageous therefore point "iii" is correct. When GPA is over 3.5, males make more money. Being female means that females make 35 thousand dollars more just for being a female, but make 10 thousand per 1.0 in GPA increase. This suggests that if the GPA is 3.5 then the effect of gender is neutral and any higher it is advantageous to be a man. 
 
 (b) Predict the salary of a female with IQ of 110 and a GPA of 4.0.
 ```{r}
-50 + 20*4 + 0.07*110 + 35*0 + 0.01*(110)*(4) - 10*(0)*(4)
+50 + 20*4 + 0.07*110 + 35*1 + 0.01*(110)*(4) - 10*(1)*(4)
 ```
-142100 dollars
+137100 dollars
 
-(c) True or false: Since the coefficient for the GPA/IQ interaction term is very small, there is very little evidence of an interaction effect. Justify your answer.
-
-False, the effect may be small, but that does not mean that the p value for this interaction is small. We may choose to leave this effect out for parsimony's sake however.
+(c) False, the effect may be small, but that does not mean that the p value for this interaction is small. We may choose to leave this effect out for parsimony's sake however. Also, since the range of IQ values is larger than both gender and GPA, the IQ coefficients will tend to be smaller anyways. 
 
 
 ## Question 2 (Chapter 3, #9, 10 marks)
