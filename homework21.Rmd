@@ -1,0 +1,223 @@
+---
+title: "Homework 2"
+author: "Charandeep Grewal 301190855, James Hopkins 301139318, Alisha McGrath 301242597"
+date: '2017-10-04'
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Question 1 (Chapter 3, #3, 6 marks)
+
+Suppose we have a data set with five predictors, X1 = GPA, X2 = IQ, X3 = Gender (1 for Female and 0 for Male), X4 = Interaction between GPA and IQ, and X5 = Interaction between GPA and Gender. The response is starting salary after graduation (in thousands of dollars). Suppose we use least squares to fit the model, and get βˆ0 = 50, βˆ1 = 2 0 , βˆ 2 = 0 . 0 7 , βˆ 3 = 3 5 , βˆ 4 = 0 . 0 1 , βˆ 5 = − 1 0 .
+(a) Which answer is correct, and why?
+i. For a fixed value of IQ and GPA,males earn more on average than females.
+ii. For a fixed value of IQ and GPA, females earn more on average than males.
+iii. For a fixed value of IQ and GPA,males earn more on average than females provided that the GPA is high enough.
+iv. For a fixed value of IQ and GPA, females earn more on average than males provided that the GPA is high enough.
+
+X3 is gender and X5 is the interation between gender and GPA
+because βˆ 3 = 35 and βˆ 5 = − 10 a higher GPA will cause being a male to be disadvantageous. Being male means that men make 35 thousand dollars more just for being a man, but make 10 thousand per 1.0 in GPA increase. This suggests that if the GPA is 3.5 then the effect of gender is neutral and any higher it is advantageous to be a girl. 
+
+(b) Predict the salary of a female with IQ of 110 and a GPA of 4.0.
+```{r}
+50 + 20*4 + 0.07*110 + 35*0 + 0.01*(110)*(4) - 10*(0)*(4)
+```
+142100 dollars
+
+(c) True or false: Since the coefficient for the GPA/IQ interaction term is very small, there is very little evidence of an interaction effect. Justify your answer.
+
+False, the effect may be small, but that does not mean that the p value for this interaction is small. We may choose to leave this effect out for parsimony's sake however.
+
+
+## Question 2 (Chapter 3, #9, 10 marks)
+
+```{r}
+library(ISLR) 
+data(Auto)
+library(dplyr)
+Auto2 <- Auto %>% select(-name) %>% mutate(origin = factor(origin))
+head(Auto)
+head(Auto2)
+```
+
+This question involves the use of multiple linear regression on the Auto data set.
+
+(a) Produce a scatterplot matrix which includes all of the variables in the data set.
+```{r}
+pairs(Auto)
+```
+
+(b) Compute the matrix of correlations between the variables using the function cor(). You will need to exclude the name variable, which is qualitative.
+```{r}
+
+AutoCor <- Auto2[, c(1:7)]
+Auto2[8] <- lapply(Auto2[8], as.numeric)
+corcoefs <- cor(Auto2)
+corcoefs
+
+
+```
+(c) Use the lm() function to perform a multiple linear regression with mpg as the response and all other variables except name as the predictors. Use the summary() function to print the results. Comment on the output. For instance:
+
+```{r}
+autolm <-lm(mpg ~ ., data = Auto2)
+summary(autolm)
+```
+
+i. Is there a relationship between the predictors and the re- sponse?
+
+Yes, the F statistic is very large.
+
+The p values for cylinders, acceleration, and horsepower are very large and suggest that there is no relationship between them and mpg.
+
+
+ii. Which predictors appear to have a statistically significant relationship to the response?
+
+All of the other predictors are statistically significant
+
+iii. What does the coefficient for the year variable suggest?
+
+The year coefficient is very statistically significant (very small p value). It suggests that for every year newer a car is, its mpg increases by 0.751 
+
+(d) Use the plot() function to produce diagnostic plots of the linear regression fit. Comment on any problems you see with the fit. Do the residual plots suggest any unusually large outliers? Does the leverage plot identify any observations with unusually high leverage?
+
+```{r}
+plot(autolm)
+
+```
+The residual vs fitted plot looks mostly linear, but there may be a slight dip in the middle.
+There appears to be non-constant error variance due to the funnel shape of the Residuals vs Fitted plot
+Observation 14 has a very high amount of leverage.
+321, 325, and 324 may be outliers
+
+(e) Use the * and : symbols to fit linear regression models with interaction effects. Do any interactions appear to be statistically significant?
+```{r}
+autolm2 <-lm(mpg ~ (.)^2, data = Auto2)
+summary(autolm2)
+
+
+Auto2$acceleration <- NULL
+Auto2$horsepower <- NULL
+autolm3 <-lm(mpg ~ (.)^2, data = Auto2) 
+
+summary(autolm3)
+```
+The following: 
+acceleration:year          
+acceleration:origin 
+displacement:year
+all appear to have significant interaction effects at the 5% level when every predictor is included
+
+(f) Try a few different transformations of the variables, such as log(X), √X, X2. Comment on your findings. To keep the investigation of transformations
+manageable, try transformations of the `weight` variable
+only.
+
+```{r}
+
+plot(lm(mpg~ weight, data = Auto))
+plot(lm (mpg~ log(weight), data = Auto))
+plot(lm(mpg~ sqrt(weight), data = Auto))
+plot(lm(mpg~ weight + I(weight^2), data = Auto))
+
+
+
+```
+Both log(weight) and the addition of weight^2 seem to fit the data slightly better, however all transformations suffer from similar problems. We can use Anova to investigate the addition of weight^2 to the overall model.
+
+
+```{r}
+lmb <- lm(mpg~. - name, data = Auto)
+lmsqr <- lm(mpg~. + I(weight^2) - name, data = Auto)
+anova(lmb, lmsqr)
+```
+For the model with all the predictors, but no interactions: The anova table for adding a squared weight predictor has a small p value and suggests that adding the weight^2 fits the data better.
+
+
+## Question 3 (Chapter 4, #4, 7 marks)
+
+(a) (0.65-0.55)/(1-0) = 10% of the available observations due to 'X' being uniformly distributed. 
+
+(b) Since both X1 and X2 are using 10% of the available observations and 'X' is also uniformaly distributed, then: 0.1*0.1 = 0.01 or 1 % of the available observations. 
+
+(c) Given (a) and (b), for 100 features only $0.1^{100}$ observations would be used. 
+
+(d) Given parts a-c, as you start to increase the number of features, a lower percentage of available observations are used when using the KNN method. This means that for a given sample size, more feaures = fewer neighbours. In (a), 1 feature is used which allows us to use 10% of the available observations. In (c), when 100 features are used the percentage of observations used is extremely small. Also, due to the 'curse of dimensionality' the test may not have any nearby neighbours when the number of features is large, leading to poor predictions.  
+
+(e) For p = 1 : $0.1^{1}=$ 0.1,  for p = 2: $0.1^{1/2}=$ 0.316,  for p = 100: $0.1^{1/100}=$ 0.977 --> This means for p = 1 we would need to use 10% of that feature's range to get 10% of the training observations. For p = 2, we would have to use 31.6% of each feature's range to get 10% of the training observations. For p = 100, we would have to get 97.7% of each feaure's range to cover 10% of the training observations. When number of features is increased , the percentage of observations in each feature's range to get 10% of the training observations is also increased. In the p = 100 case, we can see that we would need almost the entire range of each feature's observations just to cover 10% of the training observations.
+
+
+## Question 4 (Chapter 4, #10 parts (a)-(h), 9 marks)
+
+```{r}
+library(ISLR) 
+data(Weekly)
+library(tidyverse)
+library(tidyr)
+head(Weekly)
+```
+
+```{r}
+plot(Weekly)
+```
+```{r}
+market <- Weekly
+market <- mutate(market, dDirection = as.numeric(Direction == "Up"))
+```
+```{r}
+market <- mutate(market, Today = 1:nrow(market))
+ggplot(market,aes(x=Today,y=Volume,color=Year)) + geom_line() + 
+geom_smooth()
+```
+For the weekly data set, there is a gradual upward trend accompanied by a large downturn as expected due to the financial crisis in 2008. There is also a great deal of volatility as seen in the final plot during this time. Year, and Volume appear to have some sort of logarithmic interatioc.
+(b)
+```{r}
+fit <- glm(Direction ~ Lag1+Lag2+Lag3+Lag4+Lag5+Volume, data = market, family = binomial())
+round(summary(fit)$coefficients, 3)
+fitNull <- glm(Direction ~ 1, data = market, family = binomial())
+anova(fitNull, fit)
+pchisq(9.8452, df = 6, lower.tail = FALSE)
+```
+The only predictor that appears to be statistically significant under the null hypothesis that the parameters are equal to zero is Lag2 (the intercept being of significance as well, so using an intercept-free model wouldn't be usefull with this evidence).
+(c)
+```{r}
+predDir <- function(fit,dat){
+probs <- predict(fit, newdata=dat, type = "response")
+n=nrow(dat)
+pp<-rep("Down", n)
+pp[probs>0.5] <- "Up"
+return(data.frame(predDirection=pp, obsDirection=dat$Direction))
+}
+pdat <- predDir(fit, market)
+table(pdat)
+```
+The confusion matrix is telling us that logistic regression is not a particularly good model for making predictions with these data. Note that of the entire data set, 478 preditions are incorrect. This is strong evidence to chose another modelling strategy.
+
+d)
+```{r}
+library(dplyr)
+train <- ((market$Year < 2008))
+m.train <- market[train,]
+m.test <- market[!train,]
+fit.train <- glm(Direction ~ Lag2, data = m.train, family = binomial())
+summary(fit.train)
+```
+e)
+```{r}
+library(MASS)
+lda.fit <- lda(Direction ~ Lag2, data = m.train)
+preds <- predict(lda.fit, newdata = m.test)
+pdat2<- data.frame(predDirection = preds$class, obsDirection = m.test$Direction)
+summary(lda.fit)
+```
+f)
+
+```{r}
+qda.fit <- qda(Direction ~ Lag2, data = m.train)
+summary(qda.fit)
+```
