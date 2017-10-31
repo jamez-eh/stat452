@@ -1,0 +1,136 @@
+---
+title: "Homework 3"
+author: "Charandeep Grewal 301190855, James Hopkins 301139318, Alisha McGrath 301242597"
+date: '2017-11-01'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Question 1 (Chapter 6, #8, parts (a)-(e), 10 marks)
+
+
+(a) (1 mark)
+```{r}
+set.seed(94)
+X = rnorm(100)
+eps = rnorm(100)
+```
+(b) (1 mark)
+```{r}
+beta0 = 2
+beta1 = -3
+beta2 = 5
+beta3 = 7
+Y = beta0 + beta1 * X + beta2 * X^2 + beta3 * X^3 + eps
+```
+
+(c) (3 marks)
+```{r}
+library(leaps)
+data.full = data.frame("y" = Y, "x" = X)
+mod.full = regsubsets(y~poly(x, 10, raw=T), data=data.full, nvmax=10)
+mod.summary = summary(mod.full)
+which.min(mod.summary$cp)
+which.min(mod.summary$bic)
+which.max(mod.summary$adjr2)
+```
+For Cp, BIC, and adjusted R^2, the $3$ variable model is selected. 
+```{r}
+plot(mod.summary$cp, xlab="Subset Size", ylab="Cp",  type="l")
+points(3, mod.summary$cp[3], col = "blue", lwd=7)
+plot(mod.summary$bic, xlab="Subset Size", ylab="BIC", type="l")
+points(3, mod.summary$bic[3], col="blue", lwd=7)
+plot(mod.summary$adjr2, xlab="Subset Size", ylab="Adjusted R2", type="l")
+points(3, mod.summary$adjr2[3], col="blue", lwd=7)
+```
+```{r}
+coefficients(mod.full, id=3)
+```
+(d) (2 marks) 
+```{r}
+forward.model = regsubsets(y~poly(x, 10, raw=T), data=data.full, nvmax=10, method="forward")
+back.model = regsubsets(y~poly(x, 10, raw=T), data=data.full, nvmax=10, method="backward")
+fwd.summary = summary(forward.model)
+bwd.summary = summary(back.model)
+which.min(fwd.summary$cp)
+which.min(bwd.summary$cp)
+which.min(fwd.summary$bic)
+which.min(bwd.summary$bic)
+which.max(fwd.summary$adjr2)
+which.max(bwd.summary$adjr2)
+```
+```{r}
+par(mfrow=c(3, 2))
+plot(fwd.summary$cp, xlab="Subset Size", ylab="Forward Cp", type="l")
+points(3, fwd.summary$cp[3], col="blue", lwd=7)
+plot(bwd.summary$cp, xlab="Subset Size", ylab="Backward Cp", type="l")
+points(3, bwd.summary$cp[3], col="blue", lwd=7)
+plot(fwd.summary$bic, xlab="Subset Size", ylab="Forward BIC", type="l")
+points(3, fwd.summary$bic[3], col="blue", lwd=7)
+plot(bwd.summary$bic, xlab="Subset Size", ylab="Backward BIC", type="l")
+points(3, bwd.summary$bic[3], col="blue", lwd=7)
+plot(fwd.summary$adjr2, xlab="Subset Size", ylab="Forward Adjusted R2", type="l")
+points(3, fwd.summary$adjr2[3], col="blue", lwd=7)
+plot(bwd.summary$adjr2, xlab="Subset Size", ylab="Backward Adjusted R2", type="l")
+points(4, bwd.summary$adjr2[4], col="blue", lwd=7)
+```
+```{r}
+coefficients(forward.model, id=3)
+coefficients(back.model, id=3)
+coefficients(back.model, id=4)
+```
+The coefficients are very similar to (c). Backward selection model with $4$ variables chooses to use $X^8$ for its 4th variable, however the varaible seems negligible with such a low coefficient.
+
+(e) (3 marks)
+```{r}
+library(glmnet)
+Xmat = model.matrix(y~poly(x, 10, raw=T), data=data.full)[, -1]
+lambdas <- 10^{seq(from=-2,to=5,length=100)}
+cv.lafit <- cv.glmnet(Xmat,Y,alpha=1,lambda=lambdas) 
+plot(cv.lafit)
+la.best.lam <- cv.lafit$lambda.1se
+la.best.lam
+la.best <- glmnet(Xmat,Y,alpha=1,lambda=la.best.lam)
+coef(la.best)
+```
+The lasso model with the lambda chosen has $4$ variables rather than $3$ varaibles obtained from the majority of the previous models from parts (c) and (d). The lasso model chooses $X^5$ as its 4th variable instead of $X^8$ like the backward selection model with $4$ varaibles. However, $X^8$ has a small coefficient that could be negligible depending on context of our model. Also, the other $3$ variables chosen are the same as all the previous models with similar coefficients. Lastly, the lasso model shows that some of the varaibles have a coefficient of 0 and are not useful to be included in our model.   
+
+
+## Question 2 (Ch6, #9, 12 marks)
+
+(a) (0 marks)
+To make everyone's results comparable, please
+select your test set with the following.
+
+```{r}
+library(ISLR)
+data(College)
+dim(College) # 777 rows, use 111 as test
+set.seed(1)
+testset <- sample(1:777,size=111)
+College.test <- College[testset,]
+College.train <- College[-testset,]
+```
+
+(b) (2 marks)
+
+(c) (2 marks)
+
+(d) (2 marks)
+
+(e) (2 marks)
+
+(f) (2 marks)
+
+(g) (2 marks)
+
+
+## Question 3 (Ch7, #6, 8 marks)
+
+(a) (5 marks)
+
+(b) (3 marks)
