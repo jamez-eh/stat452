@@ -131,6 +131,105 @@ College.train <- College[-testset,]
 
 ## Question 3 (Ch7, #6, 8 marks)
 
-(a) (5 marks)
+```{r}
+library(ISLR)
+library(boot)
+attach(Wage)
+```
+(a)
+```{r}
+set.seed(1)
 
-(b) (3 marks)
+fit.1= lm(wage~age ,data=Wage)
+fit.2= lm(wage~poly(age ,2) ,data=Wage)
+fit.3= lm(wage~poly(age ,3) ,data=Wage)
+fit.4= lm(wage~poly(age ,4) ,data=Wage)
+anova(fit.1, fit.2, fit.3, fit.4)
+
+cv.sub = function(X, Y, k){
+  folds = sample(1:k, size=nrow(X), replace=T)
+  #Container for Test Set Error (TSE)
+  TSEs = 1:k
+  
+  for(i in 1:k){
+    # Validation on ith fold:
+    testY = Y[folds==i]
+    trainY = Y[folds!=i]
+    testX = X[folds==i,]
+    trainX = X[folds!=i,]
+    
+    # Use lm.fit(), the "worker" function behind lm()
+    # to fit the model with response trainY and 
+    # design matrix trainX
+    fit = lm.fit(trainX, trainY)
+    
+    # There is no predict() for the output of fit so 
+    # we use matrix multiplication to obtain
+    # the fitted values on the test X's
+    testPreds = testX %*% fit$coefficients
+    validErr = sum((testPreds - testY)^2)
+    TSEs[i] = validErr
+  }
+  
+  #Average test-set error across folds
+  TSE = mean(TSEs)
+  return(TSE)
+}
+
+Y <- Wage$wage
+k <- 10
+prev <- 1000000
+index = 0
+
+for (i in 1:4){
+  X = model.matrix(wage~poly(age,i), data=Wage)
+  errscore = cv.sub(X,Y,k)
+  if(errscore < prev){
+    prev = errscore
+    index = i
+  }
+}
+index
+prev
+
+agelims =range(age)
+age.grid=seq (from=agelims [1], to=agelims [2])
+preds=predict (fit.4 ,newdata =list(age=age.grid),se=TRUE)
+se.bands=cbind(preds$fit +2* preds$se.fit ,preds$fit -2* preds$se.fit)
+par(mfrow =c(1,2) ,mar=c(4.5 ,4.5 ,1 ,1) ,oma=c(0,0,4,0))
+plot(age ,wage ,xlim=agelims ,cex =.5, col =" darkgrey ")
+lines(age.grid ,preds$fit ,lwd =2, col =" blue")
+```
+From 10-fold validation we get a degree of 4 as having the smallest TSE of 478174.3
+From Anova: At the 5% level, the p values suggest that either cubic or quartic are sufficient models.
+
+
+(b) 
+```{r}
+X = model.matrix(wage~age, data=Wage)
+uncut = cv.sub(X,Y,k)
+uncut
+for (j in 2:20){
+  X = model.matrix(wage~cut(age, j), data=Wage)
+  errscore = cv.sub(X,Y,k)
+  if(errscore < prev){
+    prev = errscore
+    index = j
+  }
+}
+index
+prev
+
+cutfit <- lm(wage~cut(age, 16), data=Wage)
+
+age.grid=seq (from=agelims [1], to=agelims [2])
+preds=predict (cutfit ,newdata =list(age=age.grid),se=TRUE)
+se.bands=cbind(preds$fit +2* preds$se.fit ,preds$fit -2* preds$se.fit)
+par(mfrow =c(1,2) ,mar=c(4.5 ,4.5 ,1 ,1) ,oma=c(0,0,4,0))
+plot(age ,wage ,xlim=agelims ,cex =.5, col =" darkgrey ")
+lines(age.grid ,preds$fit ,lwd =2, col =" blue")
+```
+The best number of cuts is 16 with a TSE of 478246 from 10-fold cross validation.
+
+
+
