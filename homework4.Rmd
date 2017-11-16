@@ -1,0 +1,86 @@
+---
+title: "Homework 4"
+author: "Charandeep Grewal 301190855, James Hopkins 301139318, Alisha McGrath 301242597"
+date: '2017-11-15'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Question 1 (Chapter 8, #11, 9 marks)
+
+
+(a) (1 mark)
+(Note: You should set your random seed, for reproducibility.)
+
+(b) (3 marks)
+
+
+(c) (5 marks)
+
+
+## Question 2 (Ch9, #7, 11 marks)
+
+(a) (1 mark)
+```{r}
+library(ISLR)
+gas.median = median(Auto$mpg)
+bin.var = ifelse(Auto$mpg > gas.median, 1, 0)
+Auto$binary.mpg = as.factor(bin.var)
+```
+(b) (3 marks)
+```{r}
+library(e1071)
+set.seed(1994)
+tune.out = tune(svm,binary.mpg ~ ., data = Auto, kernel = "linear", ranges=list(cost=c(10^{-3:3})))
+summary(tune.out)
+```
+The cross validation error is lowest when cost = 1. 
+
+(c) (5 marks)
+```{r}
+set.seed(1994)
+tune.out1 = tune(svm, binary.mpg ~ ., data = Auto, kernel = "radial", ranges=list(cost=c(10^{-3:3}),gamma=c(.5,1:4)))
+summary(tune.out1)
+```
+The cross validation error is lowest when cost = 1 and gamma = 0.5.
+```{r}
+set.seed(1994)
+tune.out2 = tune(svm, binary.mpg ~ ., data = Auto, kernel = "polynomial", ranges=list(cost=c(10^{-3:3}),degree=c(1:5)))
+summary(tune.out2)
+```
+The cross validation error is the lowest when cost = 1000 and degree = 1. 
+(d) (2 marks)
+```{r}
+svm.linear = svm(binary.mpg~., data=Auto, kernel="linear", cost=1)
+svm.radial = svm(binary.mpg~., data=Auto, kernel="radial", cost=1, gamma=1/2)
+svm.poly = svm(binary.mpg~., data=Auto, kernel="polynomial", cost=1000, degree=1)
+plot(svm.linear,Auto,mpg~cylinders)
+plot(svm.linear,Auto,mpg~displacement)
+plot(svm.linear,Auto,mpg~horsepower)
+plot(svm.linear,Auto,mpg~weight)
+plot(svm.linear,Auto,mpg~acceleration)
+plot(svm.linear,Auto,mpg~year)
+plot(svm.linear,Auto,mpg~origin)
+```
+```{r}
+plot(svm.radial,Auto,mpg~cylinders)
+plot(svm.radial,Auto,mpg~displacement)
+plot(svm.radial,Auto,mpg~horsepower)
+plot(svm.radial,Auto,mpg~weight)
+plot(svm.radial,Auto,mpg~acceleration)
+plot(svm.radial,Auto,mpg~year)
+plot(svm.radial,Auto,mpg~origin)
+```
+```{r}
+plot(svm.poly,Auto,mpg~cylinders)
+plot(svm.poly,Auto,mpg~displacement)
+plot(svm.poly,Auto,mpg~horsepower)
+plot(svm.poly,Auto,mpg~weight)
+plot(svm.poly,Auto,mpg~acceleration)
+plot(svm.poly,Auto,mpg~year)
+plot(svm.poly,Auto,mpg~origin)
+```
