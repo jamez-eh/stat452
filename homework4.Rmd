@@ -13,14 +13,71 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Question 1 (Chapter 8, #11, 9 marks)
 
 
-(a) (1 mark)
-(Note: You should set your random seed, for reproducibility.)
-
-(b) (3 marks)
+## Question 1 (Chapter 8, #11, 9 marks)
 
 
-(c) (5 marks)
 
+
+```{r}
+library(ISLR)
+attach(Caravan)
+set.seed(1)
+
+
+```
+
+a) Create a training set consisting of the first 1,000 observations,
+and a test set consisting of the remaining observations.
+```{r}
+Car <- Caravan
+levels(Car$Purchase)
+levels(Car$Purchase) <- c("0", "1")
+train <- Car[1:1000,]
+test <- Car[1001:nrow(Car),]
+```
+
+
+(b) Fit a boosting model to the training set with Purchase as the
+response and the other variables as predictors. Use 1,000 trees,
+and a shrinkage value of 0.01. Which predictors appear to be
+the most important?
+
+```{r}
+library(gbm)
+set.seed(1)
+
+boosted = gbm(Purchase~., data=train, n.trees=1000, shrinkage=0.01, distribution="gaussian")
+boosted
+```
+“PPERSAUT” and “MKOOPKLA” are the most important
+
+(c) Use the boosting model to predict the response on the test data.
+Predict that a person will make a purchase if the estimated probability
+of purchase is greater than 20 %. Form a confusion matrix.
+What fraction of the people predicted to make a purchase
+do in fact make one? How does this compare with the results
+obtained from applying KNN or logistic regression to this data
+set?
+
+```{r}
+pred <- predict(boosted, test, n.trees = 1000,type = "link")
+
+#pred <- exp(pred)/(1+exp(pred))
+predictions <- ifelse(pred > 1.2, 1, 0)
+table(test$Purchase, predictions)
+11/(11+40)
+
+logreg <- glm(Purchase ~ ., data = train, family = "binomial")
+logpredict <- predict(logreg, test,type="response")
+logpred <-ifelse(logpredict > 0.2, 1, 0)
+table(test$Purchase, logpred)
+
+58/(58+350)
+
+
+
+```
+The fraction of purchases that are predicted that were really purchases is 0.216 for the boosting model and 0.142 for the logistic regression model.
 
 ## Question 2 (Ch9, #7, 11 marks)
 
