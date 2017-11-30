@@ -121,21 +121,75 @@ Looking at the summaries, weight^2 and log(weight) both improve the p-values of 
 
 ## Question 4 (Chapter 4, #10 parts (a)-(h), 9 marks)
 
-(a)
+## Question 4 (Chapter 4, #10 parts (a)-(h), 9 marks)
 
+```{r}
+library(ISLR) 
+data(Weekly)
+library(tidyverse)
+library(tidyr)
+head(Weekly)
+```
+
+```{r}
+plot(Weekly)
+```
+```{r}
+market <- Weekly
+market <- mutate(market, dDirection = as.numeric(Direction == "Up"))
+```
+```{r}
+market <- mutate(market, Today = 1:nrow(market))
+ggplot(market,aes(x=Today,y=Volume,color=Year)) + geom_line() + 
+geom_smooth()
+```
+For the weekly data set, there is a gradual upward trend accompanied by a large downturn as expected due to the financial crisis in 2008. There is also a great deal of volatility as seen in the final plot during this time. Year, and Volume appear to have some sort of logarithmic interatioc.
 (b)
-
+```{r}
+fit <- glm(Direction ~ Lag1+Lag2+Lag3+Lag4+Lag5+Volume, data = market, family = binomial())
+round(summary(fit)$coefficients, 3)
+fitNull <- glm(Direction ~ 1, data = market, family = binomial())
+anova(fitNull, fit)
+pchisq(9.8452, df = 6, lower.tail = FALSE)
+```
+The only predictor that appears to be statistically significant under the null hypothesis that the parameters are equal to zero is Lag2 (the intercept being of significance as well, so using an intercept-free model wouldn't be usefull with this evidence).
 (c)
+```{r}
+predDir <- function(fit,dat){
+probs <- predict(fit, newdata=dat, type = "response")
+n=nrow(dat)
+pp<-rep("Down", n)
+pp[probs>0.5] <- "Up"
+return(data.frame(predDirection=pp, obsDirection=dat$Direction))
+}
+pdat <- predDir(fit, market)
+table(pdat)
+```
+The confusion matrix is telling us that logistic regression is not a particularly good model for making predictions with these data. Note that of the entire data set, 478 preditions are incorrect. This is strong evidence to chose another modelling strategy.
 
-(d)
+d)
+```{r}
+library(dplyr)
+train <- ((market$Year < 2008))
+m.train <- market[train,]
+m.test <- market[!train,]
+fit.train <- glm(Direction ~ Lag2, data = m.train, family = binomial())
+summary(fit.train)
+```
+e)
+```{r}
+library(MASS)
+lda.fit <- lda(Direction ~ Lag2, data = m.train)
+preds <- predict(lda.fit, newdata = m.test)
+pdat2<- data.frame(predDirection = preds$class, obsDirection = m.test$Direction)
+summary(lda.fit)
+```
+f)
 
-(e)
-
-(f)
-
-(g)
-
-(h)
+```{r}
+qda.fit <- qda(Direction ~ Lag2, data = m.train)
+summary(qda.fit)
+```
 
 (i) DO NOT HAND IN THIS PART (though you are, of course,
 free to do it on your own).
