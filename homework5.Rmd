@@ -1,0 +1,48 @@
+---
+title: "Homework 5"
+author: "Charandeeep Grewal 301190855, James Hopkins 301139318"
+date: '2017-12-01'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Question 1 (Chapter 10, #8, 4 marks)
+
+a) (1 mark)
+```{r}
+library(ISLR)
+set.seed(1994)
+prout = prcomp(USArrests, center=T, scale=T)
+prvar = prout$sdev^2
+pve = prvar / sum(prvar)
+pve
+```
+b) (3 marks)
+```{r}
+loadings = prout$rotation
+pve2 = rep(NA, 4)
+dmean = apply(USArrests, 2, mean)
+dsdev = sqrt(apply(USArrests, 2, var))
+dsc = sweep(USArrests, MARGIN=2, dmean, "-")
+dsc = sweep(dsc, MARGIN=2, dsdev, "/")
+for (i in 1:4) {
+  proto_x = sweep(dsc, MARGIN=2, loadings[,i], "*")
+  pc_x = apply(proto_x, 1, sum)
+  pve2[i] = sum(pc_x^2)
+}
+pve2 = pve2/sum(dsc^2)
+pve2
+```
+## Question 2 (Chapter 10, #9, 7 marks)
+
+a) (1 mark)
+
+b) (2 marks)
+
+c) (2 marks)
+
+d) (2 marks)
